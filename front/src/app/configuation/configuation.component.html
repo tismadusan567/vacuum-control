@@ -1,0 +1,14 @@
+<div>
+    <h3>Configuration page 1</h3>  
+    <div>
+      <form (submit)="setToken()" class="mb-5">
+        <div class="form-group mb-2">
+          <label for="token">Api Token</label>
+          <input type="text" class="form-control" id="token" name="token" placeholder="token" [(ngModel)]="apiToken">
+        </div>
+  
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  </div>
+  

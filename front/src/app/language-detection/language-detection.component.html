@@ -1,0 +1,19 @@
+<form [formGroup]="languageForm" (submit)="detectLanguage()">
+    <div style>
+        <textarea id="text-area-1" rows="4" cols="50" 
+        placeholder="text 1" [formControlName]="'text'"></textarea>
+    </div>
+
+    <input type="checkbox" id="cleanCheckbox" [formControlName]="'clean'">
+    <label for="cleanCheckbox">Clean</label>
+
+    <button [disabled]="!languageForm.valid" type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<div *ngIf="result">
+    <ol *ngFor="let lang of result.detectedLangs">
+        <li>
+            Detected language: "{{lang.lang}}" with confidence: {{lang.confidence}}
+        </li>
+    </ol>
+</div>

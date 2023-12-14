@@ -1,0 +1,40 @@
+
+<form [formGroup]="extractionForm" (submit)="extractEntities()">
+    <div style>
+        <textarea id="entity-text-area" rows="4" cols="50" 
+        placeholder="text for extraction" [formControlName]="'text'"></textarea>
+    </div>
+    
+    <div>
+        <input id="slider" type="range" min="0" max="1" step="0.01" [formControlName]="'min_confidence'" [(ngModel)]="sliderValue"/>
+        <label for="slider">{{sliderValue}}</label>
+    </div>
+
+    <input type="checkbox" id="imageCheckbox" name="image" value="image" [formControlName]="'image'">
+    <label for="imageCheckbox">Image</label>
+
+    <input type="checkbox" id="abstractCheckbox" name="abstract" value="abstract" [formControlName]="'abstract'">
+    <label for="abstractCheckbox">Abstract</label>
+
+    <input type="checkbox" id="categoriesCheckbox" name="categories" value="categories" [formControlName]="'categories'">
+    <label for="categoriesCheckbox">Categories</label>
+        
+    <button [disabled]="!extractionForm.valid" type="submit" class="btn btn-primary">Submit</button>
+</form>
+<div>
+    <div *ngFor="let annotation of annotations; let i = index;" class="mb-2">
+        <div>
+            <label>{{annotation.label}}</label>
+            <p *ngIf="annotation.abstract">Abstract: {{annotation.abstract}}</p>
+        </div>
+        <div *ngIf="annotation.categories">
+            <h4>Categories:</h4>
+            <ul *ngFor="let category of annotation.categories">
+                <li>{{category}}</li>
+            </ul>
+        </div>
+        <div *ngIf="annotation.image">
+            <img [src]="annotation.image.thumbnail">
+        </div>
+    </div>
+</div>

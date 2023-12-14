@@ -1,0 +1,8 @@
+<table *ngFor="let user of users" border="1">
+    <td>{{user.firstName}}</td>
+    <td>{{user.lastName}}</td>
+    <td>{{user.email}}</td>
+    <td>{{user.permissionsAsList}}</td>
+    <a *ngIf="canCreate()" [routerLink]="'/edit-user/' + user.userId">edit</a>
+    <button *ngIf="canDelete()" (click)="deleteUser(user.userId)">Delete</button>
+</table>

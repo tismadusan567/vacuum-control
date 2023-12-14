@@ -1,0 +1,17 @@
+<form [formGroup]="similarityForm" (submit)="checkSimilarity()">
+    <div style>
+        <textarea id="text-area-1" rows="4" cols="50" 
+        placeholder="text 1" [formControlName]="'text1'"></textarea>
+    </div>
+
+    <div style>
+        <textarea id="text-area-2" rows="4" cols="50" 
+        placeholder="text 2" [formControlName]="'text2'"></textarea>
+    </div>
+
+    <button [disabled]="!similarityForm.valid" type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<div *ngIf="result">
+    <p>Similarity: {{result.similarity}}</p>
+</div>

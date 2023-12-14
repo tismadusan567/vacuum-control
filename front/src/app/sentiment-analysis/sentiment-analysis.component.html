@@ -1,0 +1,19 @@
+<form [formGroup]="sentimentForm" (submit)="sentimentAnalysis()">
+    <div style>
+        <textarea rows="4" cols="50" placeholder="text" [formControlName]="'text'"></textarea>
+    </div>
+
+    <label for="language">Select a language:</label>
+    <select id="language" [formControlName]="'lang'">
+        <option value="en">English (en)</option>
+        <option value="it">Italian (it)</option>
+        <option value="auto">Auto-detect (auto)</option>
+    </select>
+
+    <button [disabled]="!sentimentForm.valid" type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<div *ngIf="result" [ngStyle]="{'color': getColor()}">
+    <h4>Score: {{result.sentiment.score}}</h4>
+    <h4>Type: {{result.sentiment.type}}</h4>
+</div>
