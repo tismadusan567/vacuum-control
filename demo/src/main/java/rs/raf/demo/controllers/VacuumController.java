@@ -85,4 +85,10 @@ public class VacuumController {
 
         return res != null ? ResponseEntity.ok(res) : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
+
+    @DeleteMapping(value = "/remove/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+//    @PreAuthorize("hasAuthority('can_remove_vacuums')")
+    public ResponseEntity<?> removeVacuum(@PathVariable("id") Long id) {
+        return vacuumService.deleteVacuumById(id) ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
+    }
 }
