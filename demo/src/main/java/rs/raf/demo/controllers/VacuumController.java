@@ -8,11 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import rs.raf.demo.model.AddVacuumDTO;
 import rs.raf.demo.model.User;
 import rs.raf.demo.model.Vacuum;
 import rs.raf.demo.services.UserService;
 import rs.raf.demo.services.VacuumService;
 
+import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -59,5 +61,28 @@ public class VacuumController {
         }
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+    @PostMapping(value = "/add", produces = MediaType.APPLICATION_JSON_VALUE)
+//    @PreAuthorize("hasAuthority('can_search_vacuum')")
+    public ResponseEntity<?> addVacuum(@Valid @RequestBody AddVacuumDTO vacuumDTO) {
+        System.out.println(vacuumDTO);
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.getUserByEmail(email);
+
+        if(user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
+        Vacuum vacuum = new Vacuum();
+        vacuum.setName(vacuumDTO.getName());
+        vacuum.setActive(vacuumDTO.isActive());
+        vacuum.setDateAdded(new Date());
+        vacuum.setStatus(Vacuum.VacuumStatus.OFF);
+        vacuum.setAddedByUser(user);
+
+        Vacuum res = vacuumService.addVacuum(vacuum);
+
+        return res != null ? ResponseEntity.ok(res) : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 }

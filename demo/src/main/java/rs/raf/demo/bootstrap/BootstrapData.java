@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 import rs.raf.demo.model.*;
 import rs.raf.demo.repositories.*;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,7 +40,7 @@ public class BootstrapData implements CommandLineRunner {
 
         user1.setPassword(this.passwordEncoder.encode("user1"));
         user1.setEmail("user1@gmail.com");
-        this.userRepository.save(user1);
+        userRepository.save(user1);
 
         User user2 = new User();
         user2.setFirstName("user2");
@@ -46,7 +48,7 @@ public class BootstrapData implements CommandLineRunner {
         user2.setPassword(this.passwordEncoder.encode("user2"));
         user2.setEmail("user2@gmail.com");
         user2.setPermissions(Permissions.permissionToInt.get(Permissions.Permission.can_read_users));
-        this.userRepository.save(user2);
+        userRepository.save(user2);
 
         User user3 = new User();
         user3.setFirstName("user3");
@@ -57,7 +59,7 @@ public class BootstrapData implements CommandLineRunner {
         user3.addPermission(Permissions.Permission.can_update_users);
         user3.addPermission(Permissions.Permission.can_create_users);
         user3.addPermission(Permissions.Permission.can_delete_users);
-        this.userRepository.save(user3);
+        userRepository.save(user3);
 
         Vacuum vacuum1 = new Vacuum();
         vacuum1.setName("vacuum1");
@@ -66,6 +68,14 @@ public class BootstrapData implements CommandLineRunner {
         vacuum1.setAddedByUser(user1);
         vacuum1.setDateAdded(new Date());
         vacuumRepository.save(vacuum1);
+
+        Vacuum vacuum2 = new Vacuum();
+        vacuum2.setName("vacuum2");
+        vacuum2.setActive(true);
+        vacuum2.setStatus(Vacuum.VacuumStatus.OFF);
+        vacuum2.setAddedByUser(user1);
+        vacuum2.setDateAdded(Date.from(LocalDate.now().minusDays(10).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+        vacuumRepository.save(vacuum2);
 
 
         System.out.println("Data loaded!");
