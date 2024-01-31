@@ -23,8 +23,12 @@ export class ApiService {
       {
         this.setToken(resp.jwt);
         this.permissionsService.permissions = resp.permissions;
+        if(resp.permissions.length === 0) {
+          alert("Warning, you have no permissions");
+        }
       }
     );
+  
    }
 
    getAllUsers(): Observable<User[]> {

@@ -1,6 +1,7 @@
 package rs.raf.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,6 +42,10 @@ public class User {
     @Column
     @ColumnDefault("0")
     private int permissions = 0;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "addedByUser", orphanRemoval = true)
+    @JsonManagedReference
+    private List<Vacuum> vacuums = new ArrayList<>();
 
     public void addPermission(Permissions.Permission permission) {
         permissions |= Permissions.permissionToInt.get(permission);

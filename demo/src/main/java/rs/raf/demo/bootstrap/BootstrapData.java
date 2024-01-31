@@ -9,6 +9,7 @@ import rs.raf.demo.model.*;
 import rs.raf.demo.repositories.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -16,13 +17,14 @@ import java.util.Random;
 public class BootstrapData implements CommandLineRunner {
 
     private final UserRepository userRepository;
-
+    private final VacuumRepository vacuumRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public BootstrapData(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public BootstrapData(UserRepository userRepository, PasswordEncoder passwordEncoder, VacuumRepository vacuumRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.vacuumRepository = vacuumRepository;
     }
 
     @Override
@@ -56,6 +58,15 @@ public class BootstrapData implements CommandLineRunner {
         user3.addPermission(Permissions.Permission.can_create_users);
         user3.addPermission(Permissions.Permission.can_delete_users);
         this.userRepository.save(user3);
+
+        Vacuum vacuum1 = new Vacuum();
+        vacuum1.setName("vacuum1");
+        vacuum1.setActive(true);
+        vacuum1.setStatus(Vacuum.VacuumStatus.ON);
+        vacuum1.setAddedByUser(user1);
+        vacuum1.setDateAdded(new Date());
+        vacuumRepository.save(vacuum1);
+
 
         System.out.println("Data loaded!");
     }
