@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import rs.raf.demo.model.AddVacuumDTO;
 import rs.raf.demo.model.User;
 import rs.raf.demo.model.Vacuum;
+import rs.raf.demo.model.VacuumDTO;
 import rs.raf.demo.services.UserService;
 import rs.raf.demo.services.VacuumService;
 
@@ -33,18 +34,33 @@ public class VacuumController {
         this.userService = userService;
     }
 
+    @PostMapping(value = "/start/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+//    @PreAuthorize("hasAuthority('can_start_vacuum')")
+    public ResponseEntity<?> start(@PathVariable("id") Long id) {
+        vacuumService.startVacuum(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping(value = "/stop/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+//    @PreAuthorize("hasAuthority('can_stop_vacuum')")
+    public ResponseEntity<?> stop(@PathVariable("id") Long id) {
+        vacuumService.stopVacuum(id);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @PreAuthorize("hasAuthority('can_search_vacuum')")
-    public ResponseEntity<?> searchVacuum(
+    public ResponseEntity<?> search(
             @RequestParam Optional<String> name,
             @RequestParam Optional<List<String>> status,
             @RequestParam @DateTimeFormat(pattern="MM.dd.yyyy") Optional<Date> dateFrom,
             @RequestParam @DateTimeFormat(pattern="MM.dd.yyyy") Optional<Date> dateTo
     ) {
         try {
+            //TODO izmesti u service
             String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-            List<Vacuum> vacuums = userService.getUserByEmail(email).
+            List<VacuumDTO> vacuums = userService.getUserByEmail(email).
                     getVacuums().stream()
                     .filter(Vacuum::isActive)
                     .filter(vacuum -> !name.isPresent() || vacuum.getName().toLowerCase().contains(name.get().toLowerCase()))
@@ -52,6 +68,7 @@ public class VacuumController {
                     .filter(vacuum -> !(dateFrom.isPresent() && dateTo.isPresent())
                             || (vacuum.getDateAdded().after(dateFrom.get()) && vacuum.getDateAdded().before(dateTo.get()))
                     )
+                    .map(VacuumDTO::new)
                     .collect(Collectors.toList());
 
             return ResponseEntity.ok(vacuums);
@@ -65,7 +82,7 @@ public class VacuumController {
 
     @PostMapping(value = "/add", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @PreAuthorize("hasAuthority('can_search_vacuum')")
-    public ResponseEntity<?> addVacuum(@Valid @RequestBody AddVacuumDTO vacuumDTO) {
+    public ResponseEntity<?> add(@Valid @RequestBody AddVacuumDTO vacuumDTO) {
         System.out.println(vacuumDTO);
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userService.getUserByEmail(email);
@@ -74,21 +91,16 @@ public class VacuumController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
-        Vacuum vacuum = new Vacuum();
-        vacuum.setName(vacuumDTO.getName());
-        vacuum.setActive(vacuumDTO.isActive());
-        vacuum.setDateAdded(new Date());
-        vacuum.setStatus(Vacuum.VacuumStatus.OFF);
-        vacuum.setAddedByUser(user);
+        Vacuum vacuum = new Vacuum(vacuumDTO.getName(), Vacuum.VacuumStatus.OFF, vacuumDTO.isActive(), new Date(), user);
 
         Vacuum res = vacuumService.addVacuum(vacuum);
 
-        return res != null ? ResponseEntity.ok(res) : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        return res != null ? ResponseEntity.ok(new VacuumDTO(res)) : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
     @DeleteMapping(value = "/remove/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @PreAuthorize("hasAuthority('can_remove_vacuums')")
-    public ResponseEntity<?> removeVacuum(@PathVariable("id") Long id) {
+    public ResponseEntity<?> remove(@PathVariable("id") Long id) {
         return vacuumService.deleteVacuumById(id) ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
 }

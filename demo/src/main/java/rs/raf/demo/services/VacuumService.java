@@ -1,7 +1,9 @@
 package rs.raf.demo.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import rs.raf.demo.model.Vacuum;
 import rs.raf.demo.repositories.VacuumRepository;
@@ -11,10 +13,12 @@ import java.util.Optional;
 @Service
 public class VacuumService {
     private final VacuumRepository vacuumRepository;
+    private final TaskExecutor taskExecutor;
 
     @Autowired
-    public VacuumService(VacuumRepository vacuumRepository) {
+    public VacuumService(VacuumRepository vacuumRepository, TaskExecutor taskExecutor) {
         this.vacuumRepository = vacuumRepository;
+        this.taskExecutor = taskExecutor;
     }
 
     public Vacuum addVacuum(Vacuum vacuum) {
@@ -22,7 +26,8 @@ public class VacuumService {
     }
 
     public Optional<Vacuum> getVacuumById(Long id) {
-        return vacuumRepository.findById(id);
+
+        return vacuumRepository.findByVacuumIdAndActiveIsTrue(id);
     }
 
     public boolean deleteVacuumById(Long id) {
@@ -34,5 +39,49 @@ public class VacuumService {
         }
 
         return false;
+    }
+
+    public void startVacuum(Long id) {
+        taskExecutor.execute(() -> {
+            try {
+                Optional<Vacuum> optionalVacuum = getVacuumById(id);
+                if (!optionalVacuum.isPresent()) {
+                    return;
+                }
+                Vacuum vacuum = optionalVacuum.get();
+                if (vacuum.getStatus() != Vacuum.VacuumStatus.OFF) {
+                    return;
+                }
+                Thread.sleep(5000);
+                vacuum.setStatus(Vacuum.VacuumStatus.ON);
+                vacuumRepository.save(vacuum);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } catch (ObjectOptimisticLockingFailureException e) {
+                System.out.println("Optimistic lock exception when starting vacuum: " + id);
+            }
+        });
+    }
+
+    public void stopVacuum(Long id) {
+        taskExecutor.execute(() -> {
+            try {
+                Optional<Vacuum> optionalVacuum = getVacuumById(id);
+                if (!optionalVacuum.isPresent()) {
+                    return;
+                }
+                Vacuum vacuum = optionalVacuum.get();
+                if (vacuum.getStatus() != Vacuum.VacuumStatus.ON) {
+                    return;
+                }
+                Thread.sleep(5000);
+                vacuum.setStatus(Vacuum.VacuumStatus.OFF);
+                vacuumRepository.save(vacuum);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } catch (ObjectOptimisticLockingFailureException e) {
+                System.out.println("Optimistic lock exception when stopping vacuum: " + id);
+            }
+        });
     }
 }

@@ -17,9 +17,16 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class Vacuum {
+
+    public Vacuum(String name, VacuumStatus status, boolean active, Date dateAdded, User addedByUser) {
+        this.name = name;
+        this.status = status;
+        this.active = active;
+        this.dateAdded = dateAdded;
+        this.addedByUser = addedByUser;
+    }
 
     public enum VacuumStatus {
         ON, OFF, DISCHARGING
