@@ -2,12 +2,12 @@ package rs.raf.demo.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import rs.raf.demo.model.ErrorMessage;
+import rs.raf.demo.model.Operation;
 import rs.raf.demo.model.User;
 import rs.raf.demo.model.Vacuum;
-import rs.raf.demo.model.VacuumDTO;
 import rs.raf.demo.repositories.VacuumRepository;
 
 import java.util.Date;
@@ -18,11 +18,13 @@ import java.util.stream.Collectors;
 @Service
 public class VacuumService {
     private final VacuumRepository vacuumRepository;
+    private final ErrorMessageService errorMessageService;
     private final TaskExecutor taskExecutor;
 
     @Autowired
-    public VacuumService(VacuumRepository vacuumRepository, TaskExecutor taskExecutor) {
+    public VacuumService(VacuumRepository vacuumRepository, ErrorMessageService errorMessageService, TaskExecutor taskExecutor) {
         this.vacuumRepository = vacuumRepository;
+        this.errorMessageService = errorMessageService;
         this.taskExecutor = taskExecutor;
     }
 
@@ -78,9 +80,11 @@ public class VacuumService {
                 vacuum.setStatus(Vacuum.VacuumStatus.ON);
                 vacuumRepository.save(vacuum);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
+                addErrorMessage(new Date(), id, Operation.START, "Interrupted exception");
             } catch (ObjectOptimisticLockingFailureException e) {
                 System.out.println("Optimistic lock exception when starting vacuum: " + id);
+                addErrorMessage(new Date(), id, Operation.START, "Optimistic lock exception");
             }
         });
     }
@@ -108,8 +112,10 @@ public class VacuumService {
 
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                addErrorMessage(new Date(), id, Operation.STOP, "Interrupted exception");
             } catch (ObjectOptimisticLockingFailureException e) {
                 System.out.println("Optimistic lock exception when stopping vacuum: " + id);
+                addErrorMessage(new Date(), id, Operation.STOP, "Optimistic lock exception");
             }
         });
     }
@@ -136,9 +142,16 @@ public class VacuumService {
                 vacuumRepository.save(vacuum);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                addErrorMessage(new Date(), id, Operation.DISCHARGE, "Interrupted exception");
             } catch (ObjectOptimisticLockingFailureException e) {
                 System.out.println("Optimistic lock exception when discharging vacuum: " + id);
+                addErrorMessage(new Date(), id, Operation.DISCHARGE, "Optimistic lock exception");
             }
         });
+    }
+
+    private void addErrorMessage(Date date, Long id, Operation operation, String message) {
+        ErrorMessage errorMessage = new ErrorMessage(date, id, operation, message);
+        errorMessageService.addErrorMessage(errorMessage);
     }
 }
