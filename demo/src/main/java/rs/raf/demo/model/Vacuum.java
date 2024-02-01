@@ -42,9 +42,6 @@ public class Vacuum {
     @Enumerated(EnumType.STRING)
     private VacuumStatus status;
 
-    @Column
-    private boolean active;
-
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateAdded;
 
@@ -52,6 +49,12 @@ public class Vacuum {
     @JoinColumn(name = "user_id")
     @JsonBackReference
     private User addedByUser;
+
+    @Column
+    private Integer cycleCount = 0;
+
+    @Column
+    private boolean active;
 
     @Version
     private Integer version = 0;

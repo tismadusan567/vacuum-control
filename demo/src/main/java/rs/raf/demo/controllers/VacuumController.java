@@ -64,17 +64,11 @@ public class VacuumController {
             @RequestParam @DateTimeFormat(pattern="MM.dd.yyyy") Optional<Date> dateTo
     ) {
         try {
-            //TODO izmesti u service
             String email = SecurityContextHolder.getContext().getAuthentication().getName();
+            User user = userService.getUserByEmail(email);
 
-            List<VacuumDTO> vacuums = userService.getUserByEmail(email).
-                    getVacuums().stream()
-                    .filter(Vacuum::isActive)
-                    .filter(vacuum -> !name.isPresent() || vacuum.getName().toLowerCase().contains(name.get().toLowerCase()))
-                    .filter(vacuum -> !status.isPresent() || status.get().contains(vacuum.getStatus().name()))
-                    .filter(vacuum -> !(dateFrom.isPresent() && dateTo.isPresent())
-                            || (vacuum.getDateAdded().after(dateFrom.get()) && vacuum.getDateAdded().before(dateTo.get()))
-                    )
+            List<VacuumDTO> vacuums = vacuumService.searchVacuums(user, name, status, dateFrom, dateTo)
+                    .stream()
                     .map(VacuumDTO::new)
                     .collect(Collectors.toList());
 

@@ -5,11 +5,15 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import rs.raf.demo.model.User;
 import rs.raf.demo.model.Vacuum;
+import rs.raf.demo.model.VacuumDTO;
 import rs.raf.demo.repositories.VacuumRepository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class VacuumService {
@@ -42,8 +46,21 @@ public class VacuumService {
         return false;
     }
 
-    public List<Vacuum> searchVacuums() {
-
+    public List<Vacuum> searchVacuums(
+            User user,
+            Optional<String> name,
+            Optional<List<String>> status,
+            Optional<Date> dateFrom,
+            Optional<Date> dateTo
+    ) {
+        return vacuumRepository.findVacuumsByAddedByUser(user)
+                .stream()
+                .filter(Vacuum::isActive)
+                .filter(vacuum -> !name.isPresent() || vacuum.getName().toLowerCase().contains(name.get().toLowerCase()))
+                .filter(vacuum -> !status.isPresent() || status.get().contains(vacuum.getStatus().name()))
+                .filter(vacuum -> !(dateFrom.isPresent() && dateTo.isPresent())
+                        || (vacuum.getDateAdded().after(dateFrom.get()) && vacuum.getDateAdded().before(dateTo.get()))
+                ).collect(Collectors.toList());
     }
 
     public void startVacuum(Long id) {
@@ -81,7 +98,14 @@ public class VacuumService {
                 }
                 Thread.sleep(5000);
                 vacuum.setStatus(Vacuum.VacuumStatus.OFF);
+                boolean toDischarge = vacuum.getCycleCount() == 2;
+                vacuum.setCycleCount((vacuum.getCycleCount() + 1) % 3);
                 vacuumRepository.save(vacuum);
+
+                if (toDischarge) {
+                    dischargeVacuum(id);
+                }
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ObjectOptimisticLockingFailureException e) {
