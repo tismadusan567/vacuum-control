@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import rs.raf.demo.model.Vacuum;
 import rs.raf.demo.repositories.VacuumRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -39,6 +40,10 @@ public class VacuumService {
         }
 
         return false;
+    }
+
+    public List<Vacuum> searchVacuums() {
+
     }
 
     public void startVacuum(Long id) {
@@ -78,9 +83,37 @@ public class VacuumService {
                 vacuum.setStatus(Vacuum.VacuumStatus.OFF);
                 vacuumRepository.save(vacuum);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             } catch (ObjectOptimisticLockingFailureException e) {
                 System.out.println("Optimistic lock exception when stopping vacuum: " + id);
+            }
+        });
+    }
+
+    public void dischargeVacuum(Long id) {
+        taskExecutor.execute(() -> {
+            try {
+                Optional<Vacuum> optionalVacuum = getVacuumById(id);
+                if (!optionalVacuum.isPresent()) {
+                    return;
+                }
+                Vacuum vacuum = optionalVacuum.get();
+                if (vacuum.getStatus() != Vacuum.VacuumStatus.OFF) {
+                    return;
+                }
+                Thread.sleep(5000);
+                vacuum.setStatus(Vacuum.VacuumStatus.DISCHARGING);
+                vacuumRepository.save(vacuum);
+
+                Thread.sleep(5000);
+//                refresh the entity
+                vacuum = getVacuumById(id).get();
+                vacuum.setStatus(Vacuum.VacuumStatus.OFF);
+                vacuumRepository.save(vacuum);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ObjectOptimisticLockingFailureException e) {
+                System.out.println("Optimistic lock exception when discharging vacuum: " + id);
             }
         });
     }

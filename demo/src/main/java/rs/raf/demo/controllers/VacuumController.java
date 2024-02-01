@@ -48,6 +48,13 @@ public class VacuumController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping(value = "/discharge/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+//    @PreAuthorize("hasAuthority('can_discharge_vacuum')")
+    public ResponseEntity<?> discharge(@PathVariable("id") Long id) {
+        vacuumService.dischargeVacuum(id);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @PreAuthorize("hasAuthority('can_search_vacuum')")
     public ResponseEntity<?> search(
