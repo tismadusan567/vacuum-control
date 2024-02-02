@@ -88,39 +88,43 @@ public class VacuumService {
 
     public void startVacuum(Long id) {
         taskExecutor.execute(() -> {
+
+            Optional<Vacuum> optionalVacuum = getVacuumById(id);
+            if (!optionalVacuum.isPresent()) {
+                return;
+            }
+            Vacuum vacuum = optionalVacuum.get();
+            if (vacuum.getStatus() != Vacuum.VacuumStatus.OFF) {
+                return;
+            }
+            long userId = vacuum.getAddedByUser().getUserId();
             try {
-                Optional<Vacuum> optionalVacuum = getVacuumById(id);
-                if (!optionalVacuum.isPresent()) {
-                    return;
-                }
-                Vacuum vacuum = optionalVacuum.get();
-                if (vacuum.getStatus() != Vacuum.VacuumStatus.OFF) {
-                    return;
-                }
                 Thread.sleep(5000);
                 vacuum.setStatus(Vacuum.VacuumStatus.ON);
                 vacuumRepository.save(vacuum);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                addErrorMessage(new Date(), id, Operation.START, "Interrupted exception");
+                addErrorMessage(new Date(), id, Operation.START, "Interrupted exception", userId);
             } catch (ObjectOptimisticLockingFailureException e) {
                 System.out.println("Optimistic lock exception when starting vacuum: " + id);
-                addErrorMessage(new Date(), id, Operation.START, "Optimistic lock exception");
+                addErrorMessage(new Date(), id, Operation.START, "Optimistic lock exception", userId);
             }
         });
     }
 
     public void stopVacuum(Long id) {
         taskExecutor.execute(() -> {
+            Optional<Vacuum> optionalVacuum = getVacuumById(id);
+            if (!optionalVacuum.isPresent()) {
+                return;
+            }
+            Vacuum vacuum = optionalVacuum.get();
+            if (vacuum.getStatus() != Vacuum.VacuumStatus.ON) {
+                return;
+            }
+            long userId = vacuum.getAddedByUser().getUserId();
             try {
-                Optional<Vacuum> optionalVacuum = getVacuumById(id);
-                if (!optionalVacuum.isPresent()) {
-                    return;
-                }
-                Vacuum vacuum = optionalVacuum.get();
-                if (vacuum.getStatus() != Vacuum.VacuumStatus.ON) {
-                    return;
-                }
+
                 Thread.sleep(5000);
                 vacuum.setStatus(Vacuum.VacuumStatus.OFF);
                 boolean toDischarge = vacuum.getCycleCount() == 2;
@@ -133,25 +137,27 @@ public class VacuumService {
 
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                addErrorMessage(new Date(), id, Operation.STOP, "Interrupted exception");
+                addErrorMessage(new Date(), id, Operation.STOP, "Interrupted exception", userId);
             } catch (ObjectOptimisticLockingFailureException e) {
                 System.out.println("Optimistic lock exception when stopping vacuum: " + id);
-                addErrorMessage(new Date(), id, Operation.STOP, "Optimistic lock exception");
+                addErrorMessage(new Date(), id, Operation.STOP, "Optimistic lock exception", userId);
             }
         });
     }
 
     public void dischargeVacuum(Long id) {
         taskExecutor.execute(() -> {
+            Optional<Vacuum> optionalVacuum = getVacuumById(id);
+            if (!optionalVacuum.isPresent()) {
+                return;
+            }
+            Vacuum vacuum = optionalVacuum.get();
+            if (vacuum.getStatus() != Vacuum.VacuumStatus.OFF) {
+                return;
+            }
+            long userId = vacuum.getAddedByUser().getUserId();
             try {
-                Optional<Vacuum> optionalVacuum = getVacuumById(id);
-                if (!optionalVacuum.isPresent()) {
-                    return;
-                }
-                Vacuum vacuum = optionalVacuum.get();
-                if (vacuum.getStatus() != Vacuum.VacuumStatus.OFF) {
-                    return;
-                }
+
                 Thread.sleep(5000);
                 vacuum.setStatus(Vacuum.VacuumStatus.DISCHARGING);
                 vacuumRepository.save(vacuum);
@@ -163,16 +169,16 @@ public class VacuumService {
                 vacuumRepository.save(vacuum);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                addErrorMessage(new Date(), id, Operation.DISCHARGE, "Interrupted exception");
+                addErrorMessage(new Date(), id, Operation.DISCHARGE, "Interrupted exception", userId);
             } catch (ObjectOptimisticLockingFailureException e) {
                 System.out.println("Optimistic lock exception when discharging vacuum: " + id);
-                addErrorMessage(new Date(), id, Operation.DISCHARGE, "Optimistic lock exception");
+                addErrorMessage(new Date(), id, Operation.DISCHARGE, "Optimistic lock exception", userId);
             }
         });
     }
 
-    private void addErrorMessage(Date date, Long id, Operation operation, String message) {
-        ErrorMessage errorMessage = new ErrorMessage(date, id, operation, message);
+    private void addErrorMessage(Date date, Long id, Operation operation, String message, Long userId) {
+        ErrorMessage errorMessage = new ErrorMessage(date, id, operation, message, userId);
         errorMessageService.addErrorMessage(errorMessage);
     }
 }

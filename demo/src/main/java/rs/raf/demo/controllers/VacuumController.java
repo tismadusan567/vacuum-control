@@ -5,14 +5,13 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import rs.raf.demo.model.*;
+import rs.raf.demo.services.ErrorMessageService;
 import rs.raf.demo.services.UserService;
 import rs.raf.demo.services.VacuumService;
 
-import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -24,11 +23,13 @@ import java.util.stream.Collectors;
 public class VacuumController {
     private final VacuumService vacuumService;
     private final UserService userService;
+    private final ErrorMessageService errorMessageService;
 
     @Autowired
-    public VacuumController(VacuumService vacuumService, UserService userService) {
+    public VacuumController(VacuumService vacuumService, UserService userService, ErrorMessageService errorMessageService) {
         this.vacuumService = vacuumService;
         this.userService = userService;
+        this.errorMessageService = errorMessageService;
     }
 
     @PostMapping(value = "/start/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -112,5 +113,13 @@ public class VacuumController {
 //    @PreAuthorize("hasAuthority('can_remove_vacuums')")
     public ResponseEntity<?> remove(@PathVariable("id") Long id) {
         return vacuumService.deleteVacuumById(id) ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping(value = "/errorhistory", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> errorHistory() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Long userId = userService.getUserByEmail(email).getUserId();
+
+        return ResponseEntity.ok(errorMessageService.getErrorMessagesForUser(userId));
     }
 }

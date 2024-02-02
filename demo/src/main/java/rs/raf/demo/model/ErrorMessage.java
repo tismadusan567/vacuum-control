@@ -12,11 +12,12 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 public class ErrorMessage {
-    public ErrorMessage(Date dateOfError, Long vacuumId, Operation operation, String message) {
+    public ErrorMessage(Date dateOfError, Long vacuumId, Operation operation, String message, Long vacuumOwner) {
         this.dateOfError = dateOfError;
         this.vacuumId = vacuumId;
         this.operation = operation;
         this.message = message;
+        this.vacuumOwner = vacuumOwner;
     }
 
     @Id
@@ -32,4 +33,6 @@ public class ErrorMessage {
     Operation operation;
 
     String message;
+
+    Long vacuumOwner;
 }
