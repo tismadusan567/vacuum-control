@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { LoginResponse, User, Vacuum } from '../model';
+import { ErrorMessage, LoginResponse, User, Vacuum } from '../model';
 import { Observable } from 'rxjs';
 import { PermissionsService } from './permissions.service';
 
@@ -83,6 +83,12 @@ export class ApiService {
     let params = new HttpParams().append('name', name);
 
     return this.httpClient.post<Vacuum>(this.vacuumsUrl + `/add`, {}, {headers: headers, params: params});
+   }
+
+   getErrorMessages() {
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.jwtToken}`);
+
+    return this.httpClient.get<ErrorMessage[]>(this.vacuumsUrl + `/errorhistory`, {headers})
    }
 
    private setToken(token: string): void {

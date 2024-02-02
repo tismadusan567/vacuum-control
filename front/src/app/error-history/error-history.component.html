@@ -1,1 +1,18 @@
-<p>error-history works!</p>
+<table>
+    <tr>
+        <th>id</th>
+        <th>dateOfError</th>
+        <th>vacuumId</th>
+        <th>operation</th>
+        <th>message/th>
+        <th>vacuumOwner</th>
+    </tr>
+    <tr  *ngFor="let errorMessage of errorMessages">
+        <td>{{errorMessage.id}}</td>
+        <td>{{errorMessage.dateOfError}}</td>
+        <td>{{errorMessage.vacuumId}}</td>
+        <td>{{errorMessage.operation}}</td>
+        <td>{{errorMessage.message}}</td>
+        <td>{{errorMessage.vacuumOwner}}</td>
+    </tr>
+</table>

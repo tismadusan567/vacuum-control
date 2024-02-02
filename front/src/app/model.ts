@@ -22,6 +22,15 @@ export interface Vacuum {
     version: number
 }
 
+export interface ErrorMessage {
+    id: number,
+    dateOfError: string,
+    vacuumId: number,
+    operation: string,
+    message: string,
+    vacuumOwner: number
+}
+
 export interface EntityExtractionResponse {
     annotations: Annotation[]
 }
