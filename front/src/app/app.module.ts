@@ -17,6 +17,9 @@ import { LoginComponent } from './login/login.component';
 import { UsersViewComponent } from './users-view/users-view.component';
 import { AddUserComponent } from './add-user/add-user.component';
 import { EditUserComponent } from './edit-user/edit-user.component';
+import { AddVacuumComponent } from './add-vacuum/add-vacuum.component';
+import { SearchVacuumsComponent } from './search-vacuums/search-vacuums.component';
+import { ErrorHistoryComponent } from './error-history/error-history.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +34,10 @@ import { EditUserComponent } from './edit-user/edit-user.component';
     LoginComponent,
     UsersViewComponent,
     AddUserComponent,
-    EditUserComponent
+    EditUserComponent,
+    AddVacuumComponent,
+    SearchVacuumsComponent,
+    ErrorHistoryComponent
   ],
   imports: [
     BrowserModule,

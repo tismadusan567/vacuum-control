@@ -12,6 +12,15 @@ export interface User {
     permissionsAsList: [string]
 }
 
+export interface Vacuum {
+    vacuumId: number,
+    name: string,
+    status: string,
+    active: boolean,
+    dateAdded: string,
+    addedByUserId: number,
+    version: number
+}
 
 export interface EntityExtractionResponse {
     annotations: Annotation[]

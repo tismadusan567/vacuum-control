@@ -1,0 +1,38 @@
+<form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+    <label for="name">Name:</label>
+    <input type="text" id="name" formControlName="name">
+  
+    <label for="status">Status:</label>
+    <select id="status" formControlName="status">
+      <option value="OFF">OFF</option>
+      <option value="ON">ON</option>
+      <option value="DISCHARGING">DISCHARGING</option>
+    </select>
+  
+    <label for="dateFrom">Date From:</label>
+    <input type="date" id="dateFrom" formControlName="dateFrom">
+  
+    <label for="dateTo">Date To:</label>
+    <input type="date" id="dateTo" formControlName="dateTo">
+  
+    <button type="submit">Submit</button>
+</form>
+
+<table>
+    <tr>
+        <th>vacuumId</th>
+        <th>name</th>
+        <th>status</th>
+        <th>active</th>
+        <th>userId</th>
+        <th>version</th>
+    </tr>
+    <tr  *ngFor="let vacuum of vacuums; let i = index;">
+        <td>{{vacuum.vacuumId}}</td>
+        <td>{{vacuum.name}}</td>
+        <td>{{vacuum.status}}</td>
+        <td>{{vacuum.active}}</td>
+        <td>{{vacuum.addedByUserId}}</td>
+        <td>{{vacuum.version}}</td>
+    </tr>
+</table>

@@ -1,0 +1,20 @@
+<form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+    <label for="name">Name:</label>
+    <input type="text" id="name" formControlName="name">
+  
+    <label for="status">Status:</label>
+    <select id="status" formControlName="status">
+      <option value="">Select Status</option>
+      <option value="OFF">OFF</option>
+      <option value="ON">ON</option>
+      <option value="DISCHARGING">DISCHARGING</option>
+    </select>
+  
+    <label for="dateFrom">Date From:</label>
+    <input type="date" id="dateFrom" formControlName="dateFrom">
+  
+    <label for="dateTo">Date To:</label>
+    <input type="date" id="dateTo" formControlName="dateTo">
+  
+    <button type="submit">Submit</button>
+  </form>

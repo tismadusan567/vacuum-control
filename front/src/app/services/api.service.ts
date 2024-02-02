@@ -1,6 +1,6 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { LoginResponse, User } from '../model';
+import { LoginResponse, User, Vacuum } from '../model';
 import { Observable } from 'rxjs';
 import { PermissionsService } from './permissions.service';
 
@@ -12,6 +12,7 @@ export class ApiService {
   private jwtToken: string = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyM0BnbWFpbC5jb20iLCJyb2xlcyI6IltjYW5fY3JlYXRlX3VzZXJzLCBjYW5fcmVhZF91c2VycywgY2FuX3VwZGF0ZV91c2VycywgY2FuX2RlbGV0ZV91c2Vyc10iLCJleHAiOjE3MDUwODQzODYsImlhdCI6MTcwNTA0ODM4Nn0.Ihq8cSIYW1uA1erHS1jidqYrSRNcSCXx1G06Yd9B4Qet6rTh5ZQAfJzLBTiu45DWxrQYDfbeUyHgzBijDK4B0Q";
   private readonly loginUrl = "http://localhost:8080/auth/login";
   private readonly usersUrl = "http://localhost:8080/users";
+  private readonly vacuumsUrl = "http://localhost:8080/vacuum";
 
   constructor(private httpClient: HttpClient, private permissionsService: PermissionsService) {
     this.jwtToken = localStorage.getItem('domacijwt') ?? '';
@@ -61,8 +62,22 @@ export class ApiService {
     return this.httpClient.delete(this.usersUrl + `/${userId}`, {headers});
    }
 
+   searchVacuums(name?: string, status?: string, dateFrom?: string, dateTo?: string ): Observable<Vacuum[]> {
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.jwtToken}`);
+
+    const params = new HttpParams();
+    if (name) params.append('name', name);
+    if (status) params.append('status', status);
+    if (dateFrom) params.append('dateFrom', dateFrom);
+    if (dateTo) params.append('dateTo', dateTo);
+
+    return this.httpClient.get<Vacuum[]>(this.vacuumsUrl + `/search`, {headers, params});
+   }
+
    private setToken(token: string): void {
     this.jwtToken = token;
     localStorage.setItem('domacijwt', this.jwtToken);
    }
+
+   
 }

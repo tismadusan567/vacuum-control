@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface VacuumRepository extends JpaRepository<Vacuum, Long> {
     Optional<Vacuum> findByVacuumIdAndActiveIsTrue(Long id);
     List<Vacuum> findVacuumsByAddedByUser(User user);
+    //verovatno bi trebalo findVacuumsByAddedByUserAndActiveIsTrue
 }
