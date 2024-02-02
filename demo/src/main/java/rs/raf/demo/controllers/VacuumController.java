@@ -8,10 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import rs.raf.demo.model.AddVacuumDTO;
-import rs.raf.demo.model.User;
-import rs.raf.demo.model.Vacuum;
-import rs.raf.demo.model.VacuumDTO;
+import rs.raf.demo.model.*;
 import rs.raf.demo.services.UserService;
 import rs.raf.demo.services.VacuumService;
 
@@ -36,22 +33,34 @@ public class VacuumController {
 
     @PostMapping(value = "/start/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @PreAuthorize("hasAuthority('can_start_vacuum')")
-    public ResponseEntity<?> start(@PathVariable("id") Long id) {
-        vacuumService.startVacuum(id);
+    public ResponseEntity<?> start(@PathVariable("id") Long id, @RequestParam @DateTimeFormat(pattern="MM.dd.yyyy HH:mm:ss") Optional<Date> scheduleDate) {
+        if (!scheduleDate.isPresent()) {
+            vacuumService.startVacuum(id);
+        } else {
+            vacuumService.scheduleOperation(Operation.START, id, scheduleDate.get());
+        }
         return ResponseEntity.ok().build();
     }
 
     @PostMapping(value = "/stop/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @PreAuthorize("hasAuthority('can_stop_vacuum')")
-    public ResponseEntity<?> stop(@PathVariable("id") Long id) {
-        vacuumService.stopVacuum(id);
+    public ResponseEntity<?> stop(@PathVariable("id") Long id, @RequestParam @DateTimeFormat(pattern="MM.dd.yyyy HH:mm:ss") Optional<Date> scheduleDate) {
+        if (!scheduleDate.isPresent()) {
+            vacuumService.stopVacuum(id);
+        } else {
+            vacuumService.scheduleOperation(Operation.STOP, id, scheduleDate.get());
+        }
         return ResponseEntity.ok().build();
     }
 
     @PostMapping(value = "/discharge/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @PreAuthorize("hasAuthority('can_discharge_vacuum')")
-    public ResponseEntity<?> discharge(@PathVariable("id") Long id) {
-        vacuumService.dischargeVacuum(id);
+    public ResponseEntity<?> discharge(@PathVariable("id") Long id, @RequestParam @DateTimeFormat(pattern="MM.dd.yyyy HH:mm:ss") Optional<Date> scheduleDate) {
+        if (!scheduleDate.isPresent()) {
+            vacuumService.dischargeVacuum(id);
+        } else {
+            vacuumService.scheduleOperation(Operation.DISCHARGE, id, scheduleDate.get());
+        }
         return ResponseEntity.ok().build();
     }
 

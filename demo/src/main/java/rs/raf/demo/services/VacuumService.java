@@ -3,6 +3,7 @@ package rs.raf.demo.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 import rs.raf.demo.model.ErrorMessage;
 import rs.raf.demo.model.Operation;
@@ -20,12 +21,14 @@ public class VacuumService {
     private final VacuumRepository vacuumRepository;
     private final ErrorMessageService errorMessageService;
     private final TaskExecutor taskExecutor;
+    private final TaskScheduler taskScheduler;
 
     @Autowired
-    public VacuumService(VacuumRepository vacuumRepository, ErrorMessageService errorMessageService, TaskExecutor taskExecutor) {
+    public VacuumService(VacuumRepository vacuumRepository, ErrorMessageService errorMessageService, TaskExecutor taskExecutor, TaskScheduler taskScheduler) {
         this.vacuumRepository = vacuumRepository;
         this.errorMessageService = errorMessageService;
         this.taskExecutor = taskExecutor;
+        this.taskScheduler = taskScheduler;
     }
 
     public Vacuum addVacuum(Vacuum vacuum) {
@@ -63,6 +66,24 @@ public class VacuumService {
                 .filter(vacuum -> !(dateFrom.isPresent() && dateTo.isPresent())
                         || (vacuum.getDateAdded().after(dateFrom.get()) && vacuum.getDateAdded().before(dateTo.get()))
                 ).collect(Collectors.toList());
+    }
+
+    public void scheduleOperation(Operation operation, Long id, Date date) {
+        Runnable operationMethod;
+        switch (operation) {
+            case START:
+                operationMethod = () -> startVacuum(id);
+                break;
+            case STOP:
+                operationMethod = () -> stopVacuum(id);
+                break;
+            case DISCHARGE:
+                operationMethod = () -> dischargeVacuum(id);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + operation);
+        }
+        taskScheduler.schedule(operationMethod, date);
     }
 
     public void startVacuum(Long id) {
