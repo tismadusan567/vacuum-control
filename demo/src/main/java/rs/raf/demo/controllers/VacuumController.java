@@ -92,8 +92,8 @@ public class VacuumController {
 
     @PostMapping(value = "/add", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @PreAuthorize("hasAuthority('can_search_vacuum')")
-    public ResponseEntity<?> add(@Valid @RequestBody AddVacuumDTO vacuumDTO) {
-        System.out.println(vacuumDTO);
+    public ResponseEntity<?> add(@RequestParam String name) {
+        System.out.println(name);
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userService.getUserByEmail(email);
 
@@ -101,7 +101,7 @@ public class VacuumController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
-        Vacuum vacuum = new Vacuum(vacuumDTO.getName(), Vacuum.VacuumStatus.OFF, vacuumDTO.isActive(), new Date(), user);
+        Vacuum vacuum = new Vacuum(name, Vacuum.VacuumStatus.OFF, true, new Date(), user);
 
         Vacuum res = vacuumService.addVacuum(vacuum);
 

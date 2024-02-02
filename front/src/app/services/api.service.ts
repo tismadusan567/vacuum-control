@@ -65,13 +65,24 @@ export class ApiService {
    searchVacuums(name?: string, status?: string, dateFrom?: string, dateTo?: string ): Observable<Vacuum[]> {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${this.jwtToken}`);
 
-    const params = new HttpParams();
-    if (name) params.append('name', name);
-    if (status) params.append('status', status);
-    if (dateFrom) params.append('dateFrom', dateFrom);
-    if (dateTo) params.append('dateTo', dateTo);
+    let params = new HttpParams();
+    console.log(status);
+    if (name) params = params.append('name', name);
+    if (status) params = params.append('status', status);
+    if (dateFrom) params = params.append('dateFrom', dateFrom);
+    if (dateTo) params = params.append('dateTo', dateTo);
 
-    return this.httpClient.get<Vacuum[]>(this.vacuumsUrl + `/search`, {headers, params});
+    console.log(params);
+
+    return this.httpClient.get<Vacuum[]>(this.vacuumsUrl + `/search`, {headers: headers, params: params});
+   }
+
+   addVacuum(name: string) {
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.jwtToken}`);
+
+    let params = new HttpParams().append('name', name);
+
+    return this.httpClient.post<Vacuum>(this.vacuumsUrl + `/add`, {}, {headers: headers, params: params});
    }
 
    private setToken(token: string): void {
