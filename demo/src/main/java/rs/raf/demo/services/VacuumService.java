@@ -36,7 +36,6 @@ public class VacuumService {
     }
 
     public Optional<Vacuum> getVacuumById(Long id) {
-
         return vacuumRepository.findByVacuumIdAndActiveIsTrue(id);
     }
 
@@ -91,13 +90,15 @@ public class VacuumService {
 
             Optional<Vacuum> optionalVacuum = getVacuumById(id);
             if (!optionalVacuum.isPresent()) {
+                addErrorMessage(new Date(), id, Operation.START, "Vacuum doesnt exist", (long) -1);
                 return;
             }
             Vacuum vacuum = optionalVacuum.get();
+            long userId = vacuum.getAddedByUser().getUserId();
             if (vacuum.getStatus() != Vacuum.VacuumStatus.OFF) {
+                addErrorMessage(new Date(), id, Operation.START, "Vacuum is not OFF", userId);
                 return;
             }
-            long userId = vacuum.getAddedByUser().getUserId();
             try {
                 Thread.sleep(5000);
                 vacuum.setStatus(Vacuum.VacuumStatus.ON);
@@ -116,13 +117,15 @@ public class VacuumService {
         taskExecutor.execute(() -> {
             Optional<Vacuum> optionalVacuum = getVacuumById(id);
             if (!optionalVacuum.isPresent()) {
+                addErrorMessage(new Date(), id, Operation.STOP, "Vacuum doesnt exist", (long) -1);
                 return;
             }
             Vacuum vacuum = optionalVacuum.get();
+            long userId = vacuum.getAddedByUser().getUserId();
             if (vacuum.getStatus() != Vacuum.VacuumStatus.ON) {
+                addErrorMessage(new Date(), id, Operation.STOP, "Vacuum is not ON", userId);
                 return;
             }
-            long userId = vacuum.getAddedByUser().getUserId();
             try {
 
                 Thread.sleep(5000);
@@ -149,13 +152,15 @@ public class VacuumService {
         taskExecutor.execute(() -> {
             Optional<Vacuum> optionalVacuum = getVacuumById(id);
             if (!optionalVacuum.isPresent()) {
+                addErrorMessage(new Date(), id, Operation.DISCHARGE, "Vacuum doesnt exist", (long) -1);
                 return;
             }
             Vacuum vacuum = optionalVacuum.get();
+            long userId = vacuum.getAddedByUser().getUserId();
             if (vacuum.getStatus() != Vacuum.VacuumStatus.OFF) {
+                addErrorMessage(new Date(), id, Operation.DISCHARGE, "Vacuum is not OFF", userId);
                 return;
             }
-            long userId = vacuum.getAddedByUser().getUserId();
             try {
 
                 Thread.sleep(5000);
