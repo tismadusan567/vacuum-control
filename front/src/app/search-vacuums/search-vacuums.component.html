@@ -26,6 +26,7 @@
         <th>active</th>
         <th>userId</th>
         <th>version</th>
+        <th>remove</th>
     </tr>
     <tr  *ngFor="let vacuum of vacuums;">
         <td>{{vacuum.vacuumId}}</td>
@@ -34,5 +35,8 @@
         <td>{{vacuum.active}}</td>
         <td>{{vacuum.addedByUserId}}</td>
         <td>{{vacuum.version}}</td>
+        <td>
+            <button *ngIf="vacuum.status == 'OFF' && canRemoveVacuums()" (click)="removeVacuum(vacuum.vacuumId)">Remove</button>
+        </td>
     </tr>
 </table>

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ApiService } from '../services/api.service';
 import { Vacuum } from '../model';
 import { formatDate } from '../util';
+import { PermissionsService } from '../services/permissions.service';
 
 @Component({
   selector: 'app-search-vacuums',
@@ -13,7 +14,11 @@ export class SearchVacuumsComponent {
   searchForm: FormGroup;
   vacuums: Vacuum[] = [];
 
-  constructor(private apiService: ApiService, private formBuilder: FormBuilder) {
+  constructor(
+    private apiService: ApiService, 
+    private formBuilder: FormBuilder, 
+    private permissionsService: PermissionsService
+    ) {
     this.searchForm = this.formBuilder.group({
       name: [null],
       status: [null],
@@ -35,6 +40,17 @@ export class SearchVacuumsComponent {
       formatDate(this.searchForm.get('dateTo')?.value)
     ).subscribe(resp => {
       this.vacuums = resp;
+    })
+  }
+
+  canRemoveVacuums(): boolean {
+    return this.permissionsService.permissions.includes("can_remove_vacuums");
+  }
+
+  removeVacuum(vacuumId: number): void {
+    this.apiService.removeVacuum(vacuumId).subscribe( resp => {
+      console.log(resp);
+      this.onSubmit();
     })
   }
 }

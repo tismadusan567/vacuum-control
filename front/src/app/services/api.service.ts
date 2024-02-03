@@ -8,7 +8,7 @@ import { PermissionsService } from './permissions.service';
   providedIn: 'root'
 })
 export class ApiService {
-  private jwtToken: string = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyM0BnbWFpbC5jb20iLCJyb2xlcyI6IltjYW5fY3JlYXRlX3VzZXJzLCBjYW5fcmVhZF91c2VycywgY2FuX3VwZGF0ZV91c2VycywgY2FuX2RlbGV0ZV91c2Vyc10iLCJleHAiOjE3MDUwODQzODYsImlhdCI6MTcwNTA0ODM4Nn0.Ihq8cSIYW1uA1erHS1jidqYrSRNcSCXx1G06Yd9B4Qet6rTh5ZQAfJzLBTiu45DWxrQYDfbeUyHgzBijDK4B0Q";
+  private jwtToken: string = "";
   private readonly loginUrl = "http://localhost:8080/auth/login";
   private readonly usersUrl = "http://localhost:8080/users";
   private readonly vacuumsUrl = "http://localhost:8080/vacuum";
@@ -112,6 +112,12 @@ export class ApiService {
     if (date) params = params.append("scheduleDate", date);
 
     return this.httpClient.post(this.vacuumsUrl + `/discharge/` + vacuumId, {}, {headers, params});
+  }
+
+  removeVacuum(vacuumId: number) {
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.jwtToken}`);
+
+    return this.httpClient.delete(this.vacuumsUrl + `/remove/${vacuumId}`, {headers})
   }
 
    private setToken(token: string): void {

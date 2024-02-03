@@ -5,6 +5,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import rs.raf.demo.model.*;
@@ -33,7 +34,7 @@ public class VacuumController {
     }
 
     @PostMapping(value = "/start/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-//    @PreAuthorize("hasAuthority('can_start_vacuum')")
+    @PreAuthorize("hasAuthority('can_start_vacuum')")
     public ResponseEntity<?> start(@PathVariable("id") Long id, @RequestParam @DateTimeFormat(pattern="MM.dd.yyyy HH:mm:ss") Optional<Date> scheduleDate) {
         if (!scheduleDate.isPresent()) {
             vacuumService.startVacuum(id);
@@ -44,7 +45,7 @@ public class VacuumController {
     }
 
     @PostMapping(value = "/stop/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-//    @PreAuthorize("hasAuthority('can_stop_vacuum')")
+    @PreAuthorize("hasAuthority('can_stop_vacuum')")
     public ResponseEntity<?> stop(@PathVariable("id") Long id, @RequestParam @DateTimeFormat(pattern="MM.dd.yyyy HH:mm:ss") Optional<Date> scheduleDate) {
         if (!scheduleDate.isPresent()) {
             vacuumService.stopVacuum(id);
@@ -55,7 +56,7 @@ public class VacuumController {
     }
 
     @PostMapping(value = "/discharge/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-//    @PreAuthorize("hasAuthority('can_discharge_vacuum')")
+    @PreAuthorize("hasAuthority('can_discharge_vacuum')")
     public ResponseEntity<?> discharge(@PathVariable("id") Long id, @RequestParam @DateTimeFormat(pattern="MM.dd.yyyy HH:mm:ss") Optional<Date> scheduleDate) {
         if (!scheduleDate.isPresent()) {
             vacuumService.dischargeVacuum(id);
@@ -66,7 +67,7 @@ public class VacuumController {
     }
 
     @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
-//    @PreAuthorize("hasAuthority('can_search_vacuum')")
+    @PreAuthorize("hasAuthority('can_search_vacuum')")
     public ResponseEntity<?> search(
             @RequestParam Optional<String> name,
             @RequestParam Optional<List<String>> status,
@@ -92,7 +93,7 @@ public class VacuumController {
     }
 
     @PostMapping(value = "/add", produces = MediaType.APPLICATION_JSON_VALUE)
-//    @PreAuthorize("hasAuthority('can_search_vacuum')")
+    @PreAuthorize("hasAuthority('can_add_vacuum')")
     public ResponseEntity<?> add(@RequestParam String name) {
         System.out.println(name);
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -110,7 +111,7 @@ public class VacuumController {
     }
 
     @DeleteMapping(value = "/remove/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-//    @PreAuthorize("hasAuthority('can_remove_vacuums')")
+    @PreAuthorize("hasAuthority('can_remove_vacuums')")
     public ResponseEntity<?> remove(@PathVariable("id") Long id) {
         return vacuumService.deleteVacuumById(id) ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }

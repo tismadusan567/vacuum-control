@@ -55,6 +55,12 @@ public class User {
         permissions |= Permissions.permissionToInt.get(permission);
     }
 
+    public void addPermissions(Permissions.Permission... permissions) {
+        for (Permissions.Permission p : permissions) {
+            addPermission(p);
+        }
+    }
+
     public List<Permissions.Permission> getPermissionsAsList() {
 //        List<Permissions.Permission> permissionList = new ArrayList<>();
 //        for (Permissions.Permission p : Permissions.Permission.values()) {

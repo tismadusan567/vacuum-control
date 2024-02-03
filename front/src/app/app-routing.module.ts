@@ -5,7 +5,7 @@ import { EntityExtractionComponent } from './entity-extraction/entity-extraction
 import { TextSimilarityComponent } from './text-similarity/text-similarity.component';
 import { LanguageDetectionComponent } from './language-detection/language-detection.component';
 import { SentimentAnalysisComponent } from './sentiment-analysis/sentiment-analysis.component';
-import { authGuard, createGuard, readGuard, updateGuard } from './auth.guard';
+import { addVacuumGuard, authGuard, createGuard, dischargeVacuumGuard, readGuard, searchVacuumGuard, startVacuumGuard, stopVacuumGuard, updateGuard } from './auth.guard';
 import { HistoryComponent } from './history/history.component';
 import { LoginComponent } from './login/login.component';
 import { UsersViewComponent } from './users-view/users-view.component';
@@ -40,11 +40,13 @@ const routes: Routes = [
   },
   {
     path: "search-vacuums",
-    component: SearchVacuumsComponent
+    component: SearchVacuumsComponent,
+    canActivate: [searchVacuumGuard]
   },
   {
     path: "add-vacuum",
-    component: AddVacuumComponent
+    component: AddVacuumComponent,
+    canActivate: [addVacuumGuard]
   },
   {
     path: "error-history",
@@ -52,15 +54,18 @@ const routes: Routes = [
   },
   {
     path: "start-vacuum",
-    component: StartVacuumComponent
+    component: StartVacuumComponent,
+    canActivate: [startVacuumGuard]
   },
   {
     path: "stop-vacuum",
-    component: StopVacuumComponent
+    component: StopVacuumComponent,
+    canActivate: [stopVacuumGuard]
   },
   {
     path: "discharge-vacuum",
-    component: DischargeVacuumComponent
+    component: DischargeVacuumComponent,
+    canActivate: [dischargeVacuumGuard]
   }
 ];
 

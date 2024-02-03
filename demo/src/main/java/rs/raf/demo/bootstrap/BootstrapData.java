@@ -40,6 +40,11 @@ public class BootstrapData implements CommandLineRunner {
 
         user1.setPassword(this.passwordEncoder.encode("user1"));
         user1.setEmail("user1@gmail.com");
+        //all permissions
+        for (Permissions.Permission p : Permissions.Permission.values()) {
+            System.out.println(p + " " + Permissions.permissionToInt.get(p));
+            user1.addPermission(p);
+        }
         userRepository.save(user1);
 
         User user2 = new User();
@@ -47,7 +52,7 @@ public class BootstrapData implements CommandLineRunner {
         user2.setLastName("2222");
         user2.setPassword(this.passwordEncoder.encode("user2"));
         user2.setEmail("user2@gmail.com");
-        user2.setPermissions(Permissions.permissionToInt.get(Permissions.Permission.can_read_users));
+        user2.addPermission(Permissions.Permission.can_read_users);
         userRepository.save(user2);
 
         User user3 = new User();
@@ -55,10 +60,7 @@ public class BootstrapData implements CommandLineRunner {
         user3.setLastName("3333");
         user3.setPassword(this.passwordEncoder.encode("user3"));
         user3.setEmail("user3@gmail.com");
-        user3.addPermission(Permissions.Permission.can_read_users);
-        user3.addPermission(Permissions.Permission.can_update_users);
-        user3.addPermission(Permissions.Permission.can_create_users);
-        user3.addPermission(Permissions.Permission.can_delete_users);
+        user3.addPermissions(Permissions.Permission.can_search_vacuum, Permissions.Permission.can_add_vacuum);
         userRepository.save(user3);
 
         Vacuum vacuum1 = new Vacuum();

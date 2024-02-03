@@ -22,3 +22,27 @@ export const updateGuard: CanActivateFn = (route, state) => {
 export const deleteGuard: CanActivateFn = (route, state) => {
   return inject(PermissionsService).permissions.includes("can_delete_users");
 }
+
+export const searchVacuumGuard: CanActivateFn = (route, state) => {
+  return inject(PermissionsService).permissions.includes("can_search_vacuum");
+}
+
+export const startVacuumGuard: CanActivateFn = (route, state) => {
+  return inject(PermissionsService).permissions.includes("can_start_vacuum");
+}
+
+export const stopVacuumGuard: CanActivateFn = (route, state) => {
+  return inject(PermissionsService).permissions.includes("can_stop_vacuum");
+}
+
+export const dischargeVacuumGuard: CanActivateFn = (route, state) => {
+  return inject(PermissionsService).permissions.includes("can_discharge_vacuum");
+}
+
+export const addVacuumGuard: CanActivateFn = (route, state) => {
+  return inject(PermissionsService).permissions.includes("can_add_vacuum");
+}
+
+export const removeVacuumGuard: CanActivateFn = (route, state) => {
+  return inject(PermissionsService).permissions.includes("can_remove_vacuums");
+}

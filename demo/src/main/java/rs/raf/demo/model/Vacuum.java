@@ -1,17 +1,11 @@
 package rs.raf.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 @Entity
@@ -56,7 +50,7 @@ public class Vacuum {
     @Column
     private boolean active;
 
-    //pitaj na odbrani zasto optimistic a ne pessimistic
+    //zasto optimistic a ne pessimistic?
     @Version
     private Integer version = 0;
 }
