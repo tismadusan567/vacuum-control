@@ -56,6 +56,7 @@ public class Vacuum {
     @Column
     private boolean active;
 
+    //pitaj na odbrani zasto optimistic a ne pessimistic
     @Version
     private Integer version = 0;
 }

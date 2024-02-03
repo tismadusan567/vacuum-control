@@ -1,0 +1,9 @@
+<form [formGroup]="stopVacuumForm" (ngSubmit)="stopVacuum()">
+    <label for="vacuumId">Vacuum ID:</label>
+    <input type="text" id="vacuumId" formControlName="vacuumId">
+  
+    <label for="startTime">Start Time:</label>
+    <input type="datetime-local" id="startTime" formControlName="startTime">
+  
+    <button type="submit" [disabled]="stopVacuumForm.invalid">Stop Vacuum</button>
+  </form>

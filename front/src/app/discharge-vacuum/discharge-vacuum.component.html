@@ -1,0 +1,9 @@
+<form [formGroup]="dischargeVacuumForm" (ngSubmit)="dischargeVacuum()">
+    <label for="vacuumId">Vacuum ID:</label>
+    <input type="text" id="vacuumId" formControlName="vacuumId">
+  
+    <label for="startTime">Start Time:</label>
+    <input type="datetime-local" id="startTime" formControlName="startTime">
+  
+    <button type="submit" [disabled]="dischargeVacuumForm.invalid">Discharge Vacuum</button>
+  </form>

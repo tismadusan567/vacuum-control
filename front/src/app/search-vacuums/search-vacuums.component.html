@@ -18,7 +18,7 @@
     <button type="submit">Submit</button>
 </form>
 
-<table>
+<table border="1">
     <tr>
         <th>vacuumId</th>
         <th>name</th>
@@ -27,7 +27,7 @@
         <th>userId</th>
         <th>version</th>
     </tr>
-    <tr  *ngFor="let vacuum of vacuums; let i = index;">
+    <tr  *ngFor="let vacuum of vacuums;">
         <td>{{vacuum.vacuumId}}</td>
         <td>{{vacuum.name}}</td>
         <td>{{vacuum.status}}</td>

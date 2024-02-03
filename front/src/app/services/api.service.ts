@@ -8,7 +8,6 @@ import { PermissionsService } from './permissions.service';
   providedIn: 'root'
 })
 export class ApiService {
-
   private jwtToken: string = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyM0BnbWFpbC5jb20iLCJyb2xlcyI6IltjYW5fY3JlYXRlX3VzZXJzLCBjYW5fcmVhZF91c2VycywgY2FuX3VwZGF0ZV91c2VycywgY2FuX2RlbGV0ZV91c2Vyc10iLCJleHAiOjE3MDUwODQzODYsImlhdCI6MTcwNTA0ODM4Nn0.Ihq8cSIYW1uA1erHS1jidqYrSRNcSCXx1G06Yd9B4Qet6rTh5ZQAfJzLBTiu45DWxrQYDfbeUyHgzBijDK4B0Q";
   private readonly loginUrl = "http://localhost:8080/auth/login";
   private readonly usersUrl = "http://localhost:8080/users";
@@ -66,13 +65,10 @@ export class ApiService {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${this.jwtToken}`);
 
     let params = new HttpParams();
-    console.log(status);
     if (name) params = params.append('name', name);
     if (status) params = params.append('status', status);
     if (dateFrom) params = params.append('dateFrom', dateFrom);
     if (dateTo) params = params.append('dateTo', dateTo);
-
-    console.log(params);
 
     return this.httpClient.get<Vacuum[]>(this.vacuumsUrl + `/search`, {headers: headers, params: params});
    }
@@ -90,6 +86,33 @@ export class ApiService {
 
     return this.httpClient.get<ErrorMessage[]>(this.vacuumsUrl + `/errorhistory`, {headers})
    }
+
+   startVacuum(vacuumId: number, date?: string) {
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.jwtToken}`);
+
+    let params = new HttpParams();
+    if (date) params = params.append("scheduleDate", date);
+
+    return this.httpClient.post(this.vacuumsUrl + `/start/` + vacuumId, {}, {headers, params});
+  }
+
+  stopVacuum(vacuumId: number, date?: string) {
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.jwtToken}`);
+
+    let params = new HttpParams();
+    if (date) params = params.append("scheduleDate", date);
+
+    return this.httpClient.post(this.vacuumsUrl + `/stop/` + vacuumId, {}, {headers, params});
+  }
+
+  dischargeVacuum(vacuumId: number, date?: string) {
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${this.jwtToken}`);
+
+    let params = new HttpParams();
+    if (date) params = params.append("scheduleDate", date);
+
+    return this.httpClient.post(this.vacuumsUrl + `/discharge/` + vacuumId, {}, {headers, params});
+  }
 
    private setToken(token: string): void {
     this.jwtToken = token;

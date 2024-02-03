@@ -20,6 +20,9 @@ import { EditUserComponent } from './edit-user/edit-user.component';
 import { AddVacuumComponent } from './add-vacuum/add-vacuum.component';
 import { SearchVacuumsComponent } from './search-vacuums/search-vacuums.component';
 import { ErrorHistoryComponent } from './error-history/error-history.component';
+import { StartVacuumComponent } from './start-vacuum/start-vacuum.component';
+import { StopVacuumComponent } from './stop-vacuum/stop-vacuum.component';
+import { DischargeVacuumComponent } from './discharge-vacuum/discharge-vacuum.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +40,10 @@ import { ErrorHistoryComponent } from './error-history/error-history.component';
     EditUserComponent,
     AddVacuumComponent,
     SearchVacuumsComponent,
-    ErrorHistoryComponent
+    ErrorHistoryComponent,
+    StartVacuumComponent,
+    StopVacuumComponent,
+    DischargeVacuumComponent
   ],
   imports: [
     BrowserModule,

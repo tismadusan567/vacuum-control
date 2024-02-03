@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ApiService } from '../services/api.service';
 import { Vacuum } from '../model';
+import { formatDate } from '../util';
 
 @Component({
   selector: 'app-search-vacuums',
@@ -18,7 +19,7 @@ export class SearchVacuumsComponent {
       status: [null],
       dateFrom: [null],
       dateTo: [null]
-    })
+    });
   }
 
   onSubmit(): void {
@@ -30,16 +31,10 @@ export class SearchVacuumsComponent {
     this.apiService.searchVacuums(
       this.searchForm.get('name')?.value,
       this.searchForm.get('status')?.value,
-      this.formatDate(this.searchForm.get('dateFrom')?.value),
-      this.formatDate(this.searchForm.get('dateTo')?.value)
+      formatDate(this.searchForm.get('dateFrom')?.value),
+      formatDate(this.searchForm.get('dateTo')?.value)
     ).subscribe(resp => {
       this.vacuums = resp;
     })
-  }
-
-  private formatDate(date?: string): string | undefined {
-    if (date == undefined) return undefined;
-    let split = date.split("-");
-    return [split[1], split[2], split[0]].join(".");
   }
 }

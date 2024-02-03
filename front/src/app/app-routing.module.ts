@@ -14,6 +14,9 @@ import { EditUserComponent } from './edit-user/edit-user.component';
 import { SearchVacuumsComponent } from './search-vacuums/search-vacuums.component';
 import { AddVacuumComponent } from './add-vacuum/add-vacuum.component';
 import { ErrorHistoryComponent } from './error-history/error-history.component';
+import { StartVacuumComponent } from './start-vacuum/start-vacuum.component';
+import { StopVacuumComponent } from './stop-vacuum/stop-vacuum.component';
+import { DischargeVacuumComponent } from './discharge-vacuum/discharge-vacuum.component';
 
 const routes: Routes = [
   {
@@ -46,6 +49,18 @@ const routes: Routes = [
   {
     path: "error-history",
     component: ErrorHistoryComponent
+  },
+  {
+    path: "start-vacuum",
+    component: StartVacuumComponent
+  },
+  {
+    path: "stop-vacuum",
+    component: StopVacuumComponent
+  },
+  {
+    path: "discharge-vacuum",
+    component: DischargeVacuumComponent
   }
 ];
 
